@@ -75,7 +75,7 @@ class RegisterController extends Controller
         $phone = $data['phone'];
         try{
             $twilio = new Client(env("TWILIO_SID"),env('TWILIO_AUTH_TOKEN'));
-            $twilio->messages->create("+$phone", [
+            $twilio->messages->create("$phone", [
                 'from' => env("TWILIO_PHONE"),
                 'body' => "Your OTP is: $otp"
             ]);

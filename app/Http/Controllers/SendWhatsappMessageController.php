@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class SendWhatsappMessageController extends Controller
 {
-    public function index()
+    public function showForm()
     {
         return view('send_whatsapp_message');
     }
@@ -55,8 +55,6 @@ class SendWhatsappMessageController extends Controller
                 'from' => env('TWILIO_WHATSAPP_FROM'),
                 'body' => $message
             ]);
-
-            dd($message);
 
             SendWhatsappUser::create([
                 'name' => $request->phone,

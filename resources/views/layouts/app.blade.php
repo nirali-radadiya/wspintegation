@@ -55,13 +55,13 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a href="{{route('send-whatsapp')}}" class="btn btn-primary">Send Whatsapp</a>
+                                <a href="{{route('send-whatsapp.form')}}" class="btn btn-primary">Send Whatsapp</a>
                             </li>
                             <li class="nav-item dropdown ms-2">
                                 <a href="" class="btn btn-primary">Instamojo Payment</a>
                             </li>
                             <li class="nav-item dropdown ms-2">
-                                <a href="" class="btn btn-primary">Send Email</a>
+                                <a href="{{route('contact.form')}}" class="btn btn-primary">Contact</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -90,5 +90,6 @@
             @yield('content')
         </main>
     </div>
+    @yield('script')
 </body>
 </html>
