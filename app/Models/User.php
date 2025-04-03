@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'role_id',
         'otp',
+        'otp_method',
         'otp_expires_at',
     ];
 
@@ -49,4 +50,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    const OTP_METHOD_SMS = 1;
+    const OTP_METHOD_EMAIL = 2;
+    const OTP_METHOD_WHATSAPP = 3;
+
+    const OTP_METHOD_ARR = [
+     self::OTP_METHOD_SMS => 'SMS',
+     self::OTP_METHOD_EMAIL => 'Email',
+     self::OTP_METHOD_WHATSAPP => 'Whatsapp',
+    ];
 }
