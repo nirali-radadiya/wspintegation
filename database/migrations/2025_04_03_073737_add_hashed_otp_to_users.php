@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('otps', function (Blueprint $table) {
-            $table->id();
-            $table->string('mobile_number');
-            $table->integer('otp');
-            $table->timestamp('expires_at');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('otp')->nullable()->after('role_id');
+            $table->timestamp('otp_expires_at')->nullable()->after('otp');
         });
     }
 
@@ -25,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('otps');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('otp');
+            $table->dropColumn('otp_expires_at');
+        });
     }
 };

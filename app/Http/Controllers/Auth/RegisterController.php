@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Otp;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\SendOTPService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,8 @@ class RegisterController extends Controller
             'phone' => ['required','regex:/^\+\d{10,15}$/'],
             'role_id' => ['nullable'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'otp' => ['nullable'],
+            'otp_expires_at' => ['nullable'],
         ],[
             'phone.regex' => 'Phone number must be in international format (e.g., +1234567890).',
         ]);
@@ -74,22 +77,14 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $otp = rand(100000, 999999);
+        $hashedOtp = Hash::make($otp);
         $phone = $data['phone'];
+
         try{
-            $twilio = new Client(env("ACCOUNT_SID"),env('ACCOUNT_AUTH_TOKEN'));
-            $twilio->messages->create("$phone", [
-                'from' => env("ACCOUNT_PHONE"),
-                'body' => "Your OTP is: $otp"
-            ]);
+            SendOTPService::sendOTP($phone, $otp);
         }catch(\Exception $e){
             throw new \Exception("OTP could not be sent: " . $e->getMessage());
         }
-
-
-        Otp::updateOrCreate(
-            ['mobile_number' => $data['phone']],
-            ['otp' => $otp, 'expires_at' => Carbon::now()->addMinutes(10)]
-        );
 
         return User::create([
             'name' => $data['name'],
@@ -97,6 +92,8 @@ class RegisterController extends Controller
             'phone' => $data['phone'],
             'role_id' => Role::first()->id,
             'password' => Hash::make($data['password']),
+            'otp' => $hashedOtp,
+            'otp_expires_at' => Carbon::now()->addMinutes(10)
         ]);
     }
 
