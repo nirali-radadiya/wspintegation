@@ -59,7 +59,6 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
-                                    <p class="text-danger">Note: use format ex : +918521479635</p>
                                 </div>
                             </div>
 

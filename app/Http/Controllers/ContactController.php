@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
+use App\Models\Contact;
 use App\Notifications\ContactNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -13,18 +15,19 @@ class ContactController extends Controller
         return view('contact');
     }
 
-    public function submitForm(Request $request)
+    public function submitForm(ContactRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'subject' => 'required|string',
-            'message' => 'required|string',
-        ]);
+        try{
+            $validatedData = $request->validated();
+        }catch (\Exception $e){
+            dd($e->getMessage());
+        }
 
-        $data = $request->only(['name', 'email', 'subject', 'message']);
 
-        // Send Notification via Queue
+        $data = $validatedData;
+
+        Contact::create($data);
+
         Notification::route('mail', env('ADMIN_MAIL'))->notify(new ContactNotification($data));
 
         return back()->with('success', 'Your message has been sent successfully!');

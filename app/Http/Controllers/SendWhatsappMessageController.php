@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSendWhatsappRequest;
 use App\Models\SendWhatsappUser;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
@@ -14,54 +15,23 @@ class SendWhatsappMessageController extends Controller
         return view('send_whatsapp_message');
     }
 
-    public function sendWhatsAppMessage(Request $request)
+    public function sendWhatsAppMessage(StoreSendWhatsappRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'phone' => 'required|regex:/^\+\d{10,15}$/',
-            'address' => 'required',
-        ]);
+        $validatedData = $request->validated();
 
-      /*  $apiKey = env('AISENSY_API_KEY');
-        $recipientPhone = $request->phone;
-        $message = "Hello " . $request->name . ", your registration is successful!";
+        $data = $validatedData;
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-            'Content-Type' => 'application/json',
-        ])->post('https://backend.aisensy.com/campaign/t1/api/send', [
-            'mobile' => $recipientPhone,
-            'template_id' => 'YOUR_TEMPLATE_ID', // Replace with actual template ID
-            'parameters' => [
-                ['name' => 'name', 'value' => $request->name],
-                ['name' => 'message', 'value' => $message],
-            ],
-        ]);
-
-        if ($response->successful()) {
-            return back()->with('success', 'WhatsApp message sent successfully.');
-        } else {
-            return back()->with('error', 'Failed to send WhatsApp message: ' . $response->body());
-        }*/
-
-//        $recipientPhone = 'whatsapp:' . $request->phone;
-        $recipientPhone = 'whatsapp:' . '+918128639045';
-        $message = "Hello " . $request->name . ", your registration is successful!";
+        $recipientPhone = 'whatsapp:' . $data['phone'];
+        $message = "Hello " . $data['name'] . ", your registration is successful!";
 
         try {
-            $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+            $twilio = new Client(env('ACCOUNT_SID'), env('ACCOUNT_AUTH_TOKEN'));
             $message = $twilio->messages->create($recipientPhone, [
-                'from' => env('TWILIO_WHATSAPP_FROM'),
+                'from' => env('ACCOUNT_WHATSAPP_FROM'),
                 'body' => $message
             ]);
 
-            SendWhatsappUser::create([
-                'name' => $request->phone,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'address' => $request->address,
-            ]);
+            SendWhatsappUser::create($data);
 
             return back()->with('success', 'WhatsApp message sent successfully.');
         } catch (\Exception $e) {

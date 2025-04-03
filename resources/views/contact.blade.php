@@ -18,6 +18,11 @@
                                 {{ session('error') }}
                             </div>
                         @endif
+                        @if ($errors->has('message'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('message') }}
+                            </div>
+                        @endif
                         <form method="POST" action="{{ route('contact.submit') }}">
                             @csrf
 
@@ -74,9 +79,9 @@
                                 <label for="message"
                                        class="col-md-4 col-form-label text-md-end">{{ __('Message') }}</label>
                                 <div class="col-md-6">
-                                    <textarea id="message" name="message" required></textarea>
-                                    @error('address')
-                                    <span class="invalid-feedback" role="alert">
+                                    <textarea id="message" name="message"></textarea>
+                                    @error('message')
+                                    <span class="invalid-feedback message-error" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
@@ -92,8 +97,6 @@
                             </div>
                         </form>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -104,10 +107,18 @@
     <script>
         $(document).ready(function () {
             if (typeof CKEDITOR !== "undefined") {
-                CKEDITOR.replace('message');
+                CKEDITOR.replace('message', {
+                    extraPlugins: 'colorbutton,colordialog',
+                });
             } else {
                 console.error("CKEditor not loaded.");
             }
+
+            document.querySelector('form').addEventListener('submit', function () {
+                for (let instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+            });
         });
     </script>
 @endsection

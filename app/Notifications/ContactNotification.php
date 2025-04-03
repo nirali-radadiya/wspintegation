@@ -38,11 +38,6 @@ class ContactNotification extends Notification  implements ShouldQueue
     {
         return (new MailMessage)
             ->subject($this->data['subject'])
-            ->greeting("New Contact Form Submission")
-            ->line("**Name:** " . $this->data['name'])
-            ->line("**Email:** " . $this->data['email'])
-            ->line("**Message:**")
-            ->line(strip_tags($this->data['message']))
-            ->line("Thank you!");
+            ->view('emails.contact', ['data' => $this->data]);
     }
 }

@@ -60,6 +60,8 @@ class RegisterController extends Controller
             'phone' => ['required','regex:/^\+\d{10,15}$/'],
             'role_id' => ['nullable'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ],[
+            'phone.regex' => 'Phone number must be in international format (e.g., +1234567890).',
         ]);
     }
 
@@ -74,9 +76,9 @@ class RegisterController extends Controller
         $otp = rand(100000, 999999);
         $phone = $data['phone'];
         try{
-            $twilio = new Client(env("TWILIO_SID"),env('TWILIO_AUTH_TOKEN'));
+            $twilio = new Client(env("ACCOUNT_SID"),env('ACCOUNT_AUTH_TOKEN'));
             $twilio->messages->create("$phone", [
-                'from' => env("TWILIO_PHONE"),
+                'from' => env("ACCOUNT_PHONE"),
                 'body' => "Your OTP is: $otp"
             ]);
         }catch(\Exception $e){
