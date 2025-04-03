@@ -17,13 +17,7 @@ class ContactController extends Controller
 
     public function submitForm(ContactRequest $request)
     {
-        try{
-            $validatedData = $request->validated();
-        }catch (\Exception $e){
-            dd($e->getMessage());
-        }
-
-
+        $validatedData = $request->validated();
         $data = $validatedData;
 
         Contact::create($data);
