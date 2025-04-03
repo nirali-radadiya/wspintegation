@@ -113,7 +113,6 @@
             } else {
                 console.error("CKEditor not loaded.");
             }
-
             document.querySelector('form').addEventListener('submit', function () {
                 for (let instance in CKEDITOR.instances) {
                     CKEDITOR.instances[instance].updateElement();
